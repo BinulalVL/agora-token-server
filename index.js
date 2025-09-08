@@ -1,10 +1,7 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import pkg from "agora-token";   // 👈 import the whole package
-
-const { RtcTokenBuilder, RtcRole } = pkg; // 👈 destructure here
+import { RtcTokenBuilder, RtcRole } from "agora-access-token";  // ✅ correct import
 
 dotenv.config();
 
@@ -34,25 +31,21 @@ app.post("/create-token", (req, res) => {
       });
     }
 
-    // Token expires in 1 hour
     const expirationTimeInSeconds = 3600;
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
     let token;
-
     if (uid !== undefined) {
-      // UID version
       token = RtcTokenBuilder.buildTokenWithUid(
         APP_ID,
         APP_CERTIFICATE,
         channelName,
-        uid,
+        Number(uid),
         RtcRole.PUBLISHER,
         privilegeExpiredTs
       );
-    } else if (account) {
-      // Account version
+    } else {
       token = RtcTokenBuilder.buildTokenWithAccount(
         APP_ID,
         APP_CERTIFICATE,
@@ -65,11 +58,10 @@ app.post("/create-token", (req, res) => {
 
     return res.json({ token });
   } catch (error) {
-    console.error("Token generation error:", error);
+    console.error("❌ Token generation error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`✅ Agora Token Server running on http://localhost:${PORT}`);
