@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { RtcTokenBuilder, RtcRole } from "agora-access-token";  // ✅ correct import
+import pkg from "agora-access-token";   // ✅ CommonJS package import
+const { RtcTokenBuilder, RtcRole } = pkg;
 
 dotenv.config();
 
@@ -59,7 +60,7 @@ app.post("/create-token", (req, res) => {
     return res.json({ token });
   } catch (error) {
     console.error("❌ Token generation error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 
