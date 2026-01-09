@@ -2,21 +2,20 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
 
 import pkg from "agora-access-token";
 const { RtcTokenBuilder, RtcRole } = pkg;
 
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
 
 // --- Load environment variables ---
 dotenv.config();
 
 // --- Load service account ---
 const serviceAccount = JSON.parse(
-  readFileSync("./service_account_key.json", "utf8")
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY
 );
+
 
 // --- Initialize Firebase Admin ---
 if (!admin.apps.length) {
